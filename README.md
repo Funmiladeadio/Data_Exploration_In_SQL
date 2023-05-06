@@ -1,6 +1,7 @@
 # DANNY’S KITCHEN 
 ## Introduction 
 Danny seriously loves Japanese food so in the beginning of 2021, he decides to embark upon a risky venture and opens up a cute little restaurant that sells his 3 favourite foods: sushi, curry and ramen.
+**_Disclaimer:_**  This repository data was gotten Danny's eight weeks Sql challenge with additional personal insight. 
 ## Problem Statement 
 Danny’s Diner is in need of assistance to help the restaurant stay afloat - the restaurant has captured some very basic data from their few months of operation but have no idea how to use their data to help them run the business.
 Danny wants to use the data to answer a few simple questions about his customers, especially about their visiting patterns, how much money they’ve spent and also which menu items are their favourite. Having this deeper connection with his customers will help him deliver a better and more personalised experience for his loyal customers.
@@ -22,8 +23,8 @@ Danny has provided a sample of his overall customer data due to privacy issues -
 ## Data Schema
 Danny has shared three key datasets for this case study:
 - sales
--	menu
--	members
+- menu
+- members
 
 #### Entity Relationship Diagram
 You can inspect the entity relationship diagram and example data below.
@@ -368,39 +369,60 @@ SELECT  product_name,
 FROM sales_cte2
 GROUP BY  product_name;
 ```
-#### output:
+#### Before output:
  | product_name | No_items_sold  |price |
  |:----:|:----:|:----:|
- |curry	3	45
- |sushi	2	20
+ |curry	|3	|45|
+ |sushi	|2	|20|
 
+#### After output:
+ | product_name | No_items_sold  |price |
+ |:----:|:----:|:----:|
+ |curry	 |1	|15|
+ |ramen	 |5	|60|
+ |sushi	 |1	|10|
+ 
 Only two products (sushi and curry) were gotten by the customers before they became a member, while all product were purchased by the customers after they became a member with ramen been the highest. 
 
-The below query shows the difference between the number of days of visit. 	
-
-Observation 
+The below query shows the difference between the number of days of visit. 
+```sql
+        SELECT 
+                  s.customer_id,
+                  mn.product_name,
+                  s.order_date,
+                  DENSE_RANK() OVER( PARTITION BY s.customer_id ORDER BY S.order_date) AS sales_rank,
+                  day(order_date) - DAY((LAG(order_date) OVER( PARTITION BY s.customer_id ORDER BY S.order_date))) AS Daydiff
+        FROM dannys_diner.sales s
+        INNER JOIN dannys_diner.menu mn
+        ON s.product_id = mn.product_id; 
+``      
+#### Output:
+| customer_id | product_name  |order_date |sales_rank | Daydiff
+ |:----:|:----:|:----:|:----:|:----:|
+|A	|sushi	|2021-01-01	|1	| |
+|A	|curry	|2021-01-01	|1	|0 |
+|A	||curry	|2021-01-07	|2	|6 | 
+|A	|ramen	|2021-01-10	|3	|3 |
+|A	|ramen	|2021-01-11	|4	||1 |
+|A	|ramen	|2021-01-11	|4	|0 |
+|B	|curry	|2021-01-01	|1	| |
+|B	|curry	||2021-01-02	|2	|1 |
+|B	|sushi	|2021-01-04	|3	|2 |
+|B	|sushi	|2021-01-11	|4	|7 |
+|B	|ramen	|2021-01-16	|5	|5 |
+|B	|ramen	|2021-02-01	|6	||-15 |
+|C	|ramen	|2021-01-01	|1	| |
+|C	|ramen	|2021-01-01	|1	|0 |
+|C	|ramen	|2021-01-07	|2	|6 |
+ 
+## Observation 
 Fithen (15) samples of Dannys’ Diner customers sales transaction within the period of one month (1st January- 1st February) was given. The following was deduced from the data given; 
 
-Customer A & B are members of the customer loyalty program.
+- Customer A & B are members of the customer loyalty program.
+- Customer A generate the highest income followed by customer B while Customer C generates about half of that which was gotten from the other customer(A&B)
+- Customer B visits the restaurant more often
+- Customer A &B both purchased all the three types of products available (Sushi, Curry & Ramen) while Customer C only purchased Ramen. 
+- Only two products (sushi and curry) were gotten by the customers before they became a member, while all product were purchased by the customers after they became a member with ramen been the highest. 
 
-Customer A generate the highest income followed by customer B while Customer C generates about half of that which was gotten from the other customer(A&B)
-
-Customer B visits the restaurant more often
-
-Customer A &B both purchased all the three types of products available (Sushi, Curry & Ramen) while Customer C only purchased Ramen. 
-
-Only two products (sushi and curry) were gotten by the customers before they became a member, while all product were purchased by the customers after they became a member with ramen been the highest. 
-
-Conclusion
+## Conclusion
 customer loyalty program enhanced the sales rate of the kitchen as the highest sales were made after customer became member. 
-
-
-```sql
-```
-#### output:
- | customer_id | Price  | No_of_Items
- |:----:|:----:|:----:|
-
-Conclusion 
-Fithen (15) samples of Dannys’ Diner customers transaction was given.
-
