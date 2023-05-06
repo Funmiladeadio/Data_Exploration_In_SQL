@@ -1,7 +1,8 @@
 # DANNY’S KITCHEN 
 ## Introduction 
 Danny seriously loves Japanese food so in the beginning of 2021, he decides to embark upon a risky venture and opens up a cute little restaurant that sells his 3 favourite foods: sushi, curry and ramen.
-**_Disclaimer:_**  This repository data was gotten Danny's eight weeks Sql challenge with additional personal insight. 
+
+**_Disclaimer:_**  _This repository data was gotten Danny's eight weeks Sql challenge with additional personal insight._
 ## Problem Statement 
 Danny’s Diner is in need of assistance to help the restaurant stay afloat - the restaurant has captured some very basic data from their few months of operation but have no idea how to use their data to help them run the business.
 Danny wants to use the data to answer a few simple questions about his customers, especially about their visiting patterns, how much money they’ve spent and also which menu items are their favourite. Having this deeper connection with his customers will help him deliver a better and more personalised experience for his loyal customers.
@@ -28,10 +29,10 @@ Danny has shared three key datasets for this case study:
 
 #### Entity Relationship Diagram
 You can inspect the entity relationship diagram and example data below.
-![](entity diagram .jpg)
+![entity_diagram ](https://user-images.githubusercontent.com/129185418/236646870-5d1ca799-baea-4db4-9e68-f0b2bb77df2d.jpg)
 
 ## Data Exploration (DML)
-1.	What is the total amount each customer spent at the restaurant?
+**1.**	What is the total amount each customer spent at the restaurant?
 ```sql
         SELECT customer_id,
                sum(price) AS Price,
@@ -71,7 +72,7 @@ Customer A, B & C spent 76, 74 and 36 dollars respectively, purchasing 6, 6 and 
   
 Customer A, B & C visited the restaurant 4, 6, 2 days in total respectively. 
 
-3.	What was the first item from the menu purchased by each customer?
+**3.**	What was the first item from the menu purchased by each customer?
 ```sql
         SELECT customer_id,
                 product_id,
@@ -98,9 +99,9 @@ Customer A, B & C visited the restaurant 4, 6, 2 days in total respectively.
  |C	  |3	|ramen|
  |C	  |3	|ramen|
  
-Sushi and curry were the first item gotten by customer A, while Customer B got curry and customer C Ramen 
+Sushi and curry were the first item gotten by customer A, while Customer B got curry and customer C Ramen. 
 
-4.	What is the most purchased item on the menu and how many times was it purchased by all customers?
+**4.**	What is the most purchased item on the menu and how many times was it purchased by all customers?
 ```sql
         SELECT s.product_id,
                 mn.product_name,
@@ -121,7 +122,7 @@ Sushi and curry were the first item gotten by customer A, while Customer B got c
 
 Ramen is the most purchased item, followed by curry then sushi.	
 
-5.	Which item was the most popular for each customer?
+**5.**	Which item was the most popular for each customer?
 ```sql
          SELECT customer_id,
                  product_id,
@@ -150,7 +151,7 @@ Ramen is the most purchased item, followed by curry then sushi.
 
 Ramen is the most popular item bought by customer A & C, Customer C is indefinite as he purchased equal number of items. 
 
-6.	Which item was purchased first by the customer after they became a member?
+**6.**	Which item was purchased first by the customer after they became a member?
 ```sql
         WITH sales_cte AS (
                             SELECT 
@@ -181,7 +182,7 @@ Ramen is the most popular item bought by customer A & C, Customer C is indefinit
  
 Curry and sushi were the first item purchased by customer A & B respectively after they became a member. 
 
-7.	Which item was purchased just before the customer became a member?
+**7.**	Which item was purchased just before the customer became a member?
 ```sql
         WITH sales_cte AS (
                           SELECT 
@@ -213,7 +214,7 @@ Curry and sushi were the first item purchased by customer A & B respectively aft
 
 Sushi and Curry were the items purchased by Customer A and sushi by customer B just before they became a member.
 
-8.	What is the total items and amount spent by each member before they became a member?
+**8.**	What is the total items and amount spent by each member before they became a member?
 ```sql
       SELECT  
              s.customer_id,
@@ -258,7 +259,7 @@ Customer A bought two (2) items for twenty (20) dollars while customer B bought 
 
 Customer A bought four (4) items for fifty-one (51) dollars while customer B bought three (3) items for thirty-four (34) dollars after they became a member. 
 
-9.	If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
+**9.**	If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
 ```sql
         with cte as (
                     SELECT 	s.customer_id, 
@@ -286,7 +287,7 @@ Customer A bought four (4) items for fifty-one (51) dollars while customer B bou
  
 Customer A, B & C has 860, 940 and 360 points respectively. 
 
-10.	In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
+**10.**	In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
 ```sql
          WITH CTE2 AS (
                         SELECT 	s.customer_id, 
@@ -323,7 +324,7 @@ At the end of January customer, A & B has 1370 and 820 points respectively.
 
 To get more insight on the data we also to know how many and what product was gotten by the customers before and after they became a member. 
 ```sql
--- 11 how many and what product was gotten by each customer before they became a member 
+-- **11** how many and what product was gotten by each customer before they became a member?
 WITH sales_cte2 AS (
                 SELECT 
                           s.customer_id,
@@ -346,7 +347,7 @@ SELECT  product_name,
 FROM sales_cte2
 GROUP BY  product_name; 
 
--- 12 how many and what product was gotten by each customer after they became a member 
+-- **12** how many and what product was gotten by each customer after they became a member?
 WITH sales_cte2 AS (
                 SELECT 
                           s.customer_id,
@@ -362,7 +363,7 @@ WITH sales_cte2 AS (
                 WHERE 
                   s.order_date >= m.join_date 
                 )
-
+                
 SELECT  product_name,
         count(sales_rank) AS No_items_sold,
         sum(price) AS price
@@ -395,22 +396,22 @@ The below query shows the difference between the number of days of visit.
         FROM dannys_diner.sales s
         INNER JOIN dannys_diner.menu mn
         ON s.product_id = mn.product_id; 
-``      
+```     
 #### Output:
 | customer_id | product_name  |order_date |sales_rank | Daydiff
- |:----:|:----:|:----:|:----:|:----:|
+|:----:|:----:|:----:|:----:|:----:|
 |A	|sushi	|2021-01-01	|1	| |
 |A	|curry	|2021-01-01	|1	|0 |
-|A	||curry	|2021-01-07	|2	|6 | 
+|A	|curry	|2021-01-07	|2	|6 | 
 |A	|ramen	|2021-01-10	|3	|3 |
-|A	|ramen	|2021-01-11	|4	||1 |
+|A	|ramen	|2021-01-11	|4	|1 |
 |A	|ramen	|2021-01-11	|4	|0 |
 |B	|curry	|2021-01-01	|1	| |
-|B	|curry	||2021-01-02	|2	|1 |
+|B	|curry	|2021-01-02	|2	|1 |
 |B	|sushi	|2021-01-04	|3	|2 |
 |B	|sushi	|2021-01-11	|4	|7 |
 |B	|ramen	|2021-01-16	|5	|5 |
-|B	|ramen	|2021-02-01	|6	||-15 |
+|B	|ramen	|2021-02-01	|6	|15 |
 |C	|ramen	|2021-01-01	|1	| |
 |C	|ramen	|2021-01-01	|1	|0 |
 |C	|ramen	|2021-01-07	|2	|6 |
@@ -419,10 +420,10 @@ The below query shows the difference between the number of days of visit.
 Fithen (15) samples of Dannys’ Diner customers sales transaction within the period of one month (1st January- 1st February) was given. The following was deduced from the data given; 
 
 - Customer A & B are members of the customer loyalty program.
-- Customer A generate the highest income followed by customer B while Customer C generates about half of that which was gotten from the other customer(A&B)
-- Customer B visits the restaurant more often
+- Customer A generate the highest income followed by customer B while Customer C generates about half of that which was gotten from the other customer(A&B).
+- Customer B visits the restaurant more often.
 - Customer A &B both purchased all the three types of products available (Sushi, Curry & Ramen) while Customer C only purchased Ramen. 
 - Only two products (sushi and curry) were gotten by the customers before they became a member, while all product were purchased by the customers after they became a member with ramen been the highest. 
 
 ## Conclusion
-customer loyalty program enhanced the sales rate of the kitchen as the highest sales were made after customer became member. 
+Customer loyalty program enhanced the sales rate of the kitchen as the highest sales were made after customer became member. 
