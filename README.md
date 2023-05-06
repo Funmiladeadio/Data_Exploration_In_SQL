@@ -146,7 +146,7 @@ Ramen is the most purchased item, followed by curry then sushi.
 |B	|1	|sushi	|2|
 |B	|3	|ramen	|2|
 |C	|3	|ramen	|3|
-|
+
 Ramen is the most popular item bought by customer A & C, Customer C is indefinite as he purchased equal number of items. 
 
 6.	Which item was purchased first by the customer after they became a member?
@@ -235,6 +235,25 @@ Sushi and Curry were the items purchased by Customer A and sushi by customer B j
  |B	  |3	|40|
  
 Customer A bought two (2) items for twenty (20) dollars while customer B bought three (3) items for forty (40) dollars before they became a member. 
+```sql 
+        SELECT s.customer_id,
+                COUNT(s.product_id) AS No_of_Items,
+                sum(mn.price)  AS price
+        FROM 
+                sales s 
+        JOIN 
+                members b ON s.customer_id = b.customer_id
+        join 
+                menu mn on mn.product_id = s.product_id
+        WHERE   order_date >= join_date
+        GROUP   BY customer_id
+        ORDER   BY customer_id;
+```
+#### output:
+ | customer_id | No_of_Items  | price |
+ |:----:|:----:|:----:|
+|A	|4	|51|
+|B	|3	|34|
 
 Customer A bought four (4) items for fifty-one (51) dollars while customer B bought three (3) items for thirty-four (34) dollars after they became a member. 
 
@@ -300,6 +319,81 @@ Customer A, B & C has 860, 940 and 360 points respectively.
  |B	  |820|
  
 At the end of January customer, A & B has 1370 and 820 points respectively.
+
+To get more insight on the data we also to know how many and what product was gotten by the customers before and after they became a member. 
+```sql
+-- 11 how many and what product was gotten by each customer before they became a member 
+WITH sales_cte2 AS (
+                SELECT 
+                          s.customer_id,
+                          mn.product_name,
+                          s.order_date,
+                          mn.price,
+                          RANK() OVER( PARTITION BY s.customer_id ORDER BY mn.product_name) AS sales_rank
+                FROM    dannys_diner.sales s
+                INNER JOIN dannys_diner.members m
+                ON s.customer_id = m.customer_id
+                INNER JOIN dannys_diner.menu mn
+                ON s.product_id = mn.product_id
+                WHERE 
+                  s.order_date < m.join_date 
+                )
+
+SELECT  product_name,
+        count(sales_rank) AS No_items_sold,
+        sum(price)
+FROM sales_cte2
+GROUP BY  product_name; 
+
+-- 12 how many and what product was gotten by each customer after they became a member 
+WITH sales_cte2 AS (
+                SELECT 
+                          s.customer_id,
+                          mn.product_name,
+                          s.order_date,
+                          mn.price,
+                          RANK() OVER( PARTITION BY s.customer_id ORDER BY mn.product_name) AS sales_rank
+                FROM dannys_diner.sales s
+                INNER JOIN dannys_diner.members m
+                ON s.customer_id = m.customer_id
+                INNER JOIN dannys_diner.menu mn
+                ON s.product_id = mn.product_id
+                WHERE 
+                  s.order_date >= m.join_date 
+                )
+
+SELECT  product_name,
+        count(sales_rank) AS No_items_sold,
+        sum(price) AS price
+FROM sales_cte2
+GROUP BY  product_name;
+```
+#### output:
+ | product_name | No_items_sold  |price |
+ |:----:|:----:|:----:|
+ |curry	3	45
+ |sushi	2	20
+
+Only two products (sushi and curry) were gotten by the customers before they became a member, while all product were purchased by the customers after they became a member with ramen been the highest. 
+
+The below query shows the difference between the number of days of visit. 	
+
+Observation 
+Fithen (15) samples of Dannys’ Diner customers sales transaction within the period of one month (1st January- 1st February) was given. The following was deduced from the data given; 
+
+Customer A & B are members of the customer loyalty program.
+
+Customer A generate the highest income followed by customer B while Customer C generates about half of that which was gotten from the other customer(A&B)
+
+Customer B visits the restaurant more often
+
+Customer A &B both purchased all the three types of products available (Sushi, Curry & Ramen) while Customer C only purchased Ramen. 
+
+Only two products (sushi and curry) were gotten by the customers before they became a member, while all product were purchased by the customers after they became a member with ramen been the highest. 
+
+Conclusion
+customer loyalty program enhanced the sales rate of the kitchen as the highest sales were made after customer became member. 
+
 
 ```sql
 ```
